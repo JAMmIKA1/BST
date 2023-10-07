@@ -1,4 +1,6 @@
 #include <iostream>
+#include <utility>
+#include <vector>
 #include "queue.cpp"
 #include "stack.cpp"
 
@@ -15,6 +17,12 @@ public:
         left = right = NULL;
         this->value = value;
     }
+};
+
+template<typename T>
+struct pairr {
+    T value;
+    node<T>* address;
 };
 
 template<typename T>
@@ -129,14 +137,37 @@ public:
         postorder_recursion(root);
     }
     void levelorder() {
+        if(root == NULL) return;
         queue_ds<node<T>*> bst_queue;
         bst_queue.push(root);
         while(bst_queue.empty() == 0) {
             node<T>* temp_node = bst_queue.pop();
-            cout << temp_node->value << ", ";
+            std::cout << temp_node->value << ' ';
             if(temp_node->left) bst_queue.push(temp_node->left);
             if(temp_node->right) bst_queue.push(temp_node->right);
         }
+    }
+    void balance() {
+        std::vector<pairr<T>> data;
+        inorder_traversal(root, &data);
+        this->root = NULL;
+        for(int i = 0; i < data.size(); i++) {
+            free(data[i].address);
+        }
+        balance_recursion(0, data.size() - 1, data);
+    }
+    void balance_recursion(int start, int end, std::vector<pairr<T>> data) { 
+        if(start > end) return;
+        int mid = start + (end - start) / 2;
+        insert(data[mid].value);
+        balance_recursion(mid + 1, end, data);
+        balance_recursion(start, mid - 1, data);
+    }
+    void inorder_traversal(node<T>* root, std::vector<pairr<T>>* data) {
+        if(root == NULL) return;
+        inorder_traversal(root->left, data);
+        data->push_back({root->value, root});
+        inorder_traversal(root->right, data);
     }
 
     bool is_BST() {
@@ -148,14 +179,14 @@ public:
         node<T> *temp_node = root, *targeted_node;
 
         if(target == max()) {
-            cout << "No successor for max value!" << endl;
+            std::cout << "No successor for max value!" << endl;
             return 0;
         }
 
         //Search for the node
         while(true) {
             if(temp_node == NULL) {
-                cout << "Value not found!" << endl;
+                std::cout << "Value not found!" << endl;
                 return 0;
             }
             if(target == temp_node -> value) {
@@ -204,7 +235,7 @@ public:
         node<T>* temp_node = root, *targeted_node;
         while(true) {
             if(temp_node == NULL) {
-                cout << "Value not found!" << endl;
+                std::cout << "Value not found!" << endl;
                 return;
             }
             if(temp_node->right != NULL) {
@@ -286,12 +317,16 @@ public:
     }
 
 private:
-    unsigned height_recursion(node<T>* root) {
-        if ( root == NULL ) return -1;
-        unsigned left_height = height_recursion(root -> left);
-        unsigned right_height = height_recursion(root -> right);
-        if(left_height > right_height) return left_height + 1;
-        else return left_height + 1;
+    int height_recursion(node<T>* root) {
+        if (root == NULL) return -1;
+        int left_height = height_recursion(root -> left);
+        int right_height = height_recursion(root -> right);
+        if(left_height > right_height) {
+            return left_height + 1;
+        }
+        else {
+            return right_height + 1;
+        }
     }
 
     bool is_BST_recursion(node<T>* root, T min, T max) {
@@ -317,20 +352,20 @@ private:
 
     void preorder_recursion(node<T>* root) {
         if(root == NULL) return;
-        cout << root->value << ", ";
+        cout << root->value << ' ';
         preorder_recursion(root->left);
         preorder_recursion(root->right);
     }
     void inorder_recursion(node<T>* root) {
         if(root == NULL) return;
         inorder_recursion(root->left);
-        cout << root->value << ", ";
+        cout << root->value << ' ';
         inorder_recursion(root->right);
     }
     void postorder_recursion(node<T>* root) {
         if(root == NULL) return;
         postorder_recursion(root->left);
         postorder_recursion(root->right);
-        cout << root->value << ", ";
+        cout << root->value << ' ';
     }
 };

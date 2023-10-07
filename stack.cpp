@@ -33,7 +33,7 @@ public:
         this->head = NULL;
     }
     void push(T Value) {
-        stack_node<T>* new_node = new stack_node(Value);
+        stack_node<T>* new_node = new stack_node<T>(Value);
         new_node -> next = head;
         head = new_node;
         length++;

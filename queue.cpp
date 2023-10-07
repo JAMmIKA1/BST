@@ -62,7 +62,7 @@ public:
         return temp_value;
     }
     void push(T Value) {
-        queue_node<T> *new_node = new queue_node(Value);
+        queue_node<T> *new_node = new queue_node<T>(Value);
         if(tail == NULL) head = new_node;
         else tail -> next = new_node;
         tail = new_node;
