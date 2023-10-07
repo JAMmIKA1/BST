@@ -1,10 +1,7 @@
 #include <iostream>
-#include <utility>
 #include <vector>
 #include "queue.cpp"
 #include "stack.cpp"
-
-using namespace std;
 
 template<typename T>
 class node {
@@ -17,12 +14,6 @@ public:
         left = right = NULL;
         this->value = value;
     }
-};
-
-template<typename T>
-struct pairr {
-    T value;
-    node<T>* address;
 };
 
 template<typename T>
@@ -148,25 +139,23 @@ public:
         }
     }
     void balance() {
-        std::vector<pairr<T>> data;
+        std::vector<node<T>*> data;
         inorder_traversal(root, &data);
-        this->root = NULL;
-        for(int i = 0; i < data.size(); i++) {
-            free(data[i].address);
-        }
+        root = NULL;
         balance_recursion(0, data.size() - 1, data);
     }
-    void balance_recursion(int start, int end, std::vector<pairr<T>> data) { 
+    void balance_recursion(int start, int end, std::vector<node<T>*> data) { 
         if(start > end) return;
         int mid = start + (end - start) / 2;
-        insert(data[mid].value);
+        insert(data[mid]->value);
+        delete(data[mid]);
         balance_recursion(mid + 1, end, data);
         balance_recursion(start, mid - 1, data);
     }
-    void inorder_traversal(node<T>* root, std::vector<pairr<T>>* data) {
+    void inorder_traversal(node<T>* root, std::vector<node<T>*>* data) {
         if(root == NULL) return;
         inorder_traversal(root->left, data);
-        data->push_back({root->value, root});
+        data->push_back(root);
         inorder_traversal(root->right, data);
     }
 
@@ -179,14 +168,14 @@ public:
         node<T> *temp_node = root, *targeted_node;
 
         if(target == max()) {
-            std::cout << "No successor for max value!" << endl;
+            std::cout << "No successor for max value!" << std::endl;
             return 0;
         }
 
         //Search for the node
         while(true) {
             if(temp_node == NULL) {
-                std::cout << "Value not found!" << endl;
+                std::cout << "Value not found!" << std::endl;
                 return 0;
             }
             if(target == temp_node -> value) {
@@ -235,7 +224,7 @@ public:
         node<T>* temp_node = root, *targeted_node;
         while(true) {
             if(temp_node == NULL) {
-                std::cout << "Value not found!" << endl;
+                std::cout << "Value not found!" << std::endl;
                 return;
             }
             if(temp_node->right != NULL) {
@@ -352,20 +341,20 @@ private:
 
     void preorder_recursion(node<T>* root) {
         if(root == NULL) return;
-        cout << root->value << ' ';
+        std::cout << root->value << ' ';
         preorder_recursion(root->left);
         preorder_recursion(root->right);
     }
     void inorder_recursion(node<T>* root) {
         if(root == NULL) return;
         inorder_recursion(root->left);
-        cout << root->value << ' ';
+        std::cout << root->value << ' ';
         inorder_recursion(root->right);
     }
     void postorder_recursion(node<T>* root) {
         if(root == NULL) return;
         postorder_recursion(root->left);
         postorder_recursion(root->right);
-        cout << root->value << ' ';
+        std::cout << root->value << ' ';
     }
 };
