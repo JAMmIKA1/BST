@@ -1,3 +1,4 @@
+#include <cmath>
 #include <iostream>
 #include <vector>
 #include "queue.cpp"
@@ -48,7 +49,7 @@ public:
                 return false;
                 break;
             }
-            if(target < temp->value) {
+            if(target < temp -> value) {
                 temp = temp->left;
             }
             else if(target > temp->value) {
@@ -60,6 +61,39 @@ public:
             }
         }
     }
+    void printBST() {
+        queue_ds<node<T>*> queue;
+        queue.push(this->root);
+        int h = height();
+        for(int i = 0; i <= h; i++) {
+            for(int j = 0; j < (1 << (h - i)) - 1; j++)
+                std::cout << ' ';
+            for(int j = 0; j < (1 << i); j++) {
+                node<T>* tmp = queue.pop();
+                if(tmp == 0) {
+                    cout << '.';
+                    queue.push(0);
+                    queue.push(0);
+                }
+                else {
+                    cout << tmp->value;
+                    queue.push(tmp->left);
+                    queue.push(tmp->right);
+                }
+                for(int k = 0; k < (1 << (h + 1 - i)) - 1; k++)
+                    std::cout << ' ';
+            }
+            for(int j = 1; j < 1 << ((h - i) - 1); j++) {
+                cout << '\n';
+                for(int k = 0; k < 1 << (h + 1); k++) {
+                    if((k + j + 1) % (1 << (h + 1 - i)) == 1 << (h - i)) cout << '/';
+                    else if((k + 1 - j) % (1 << (h + 1 - i)) == 1 << (h - i)) cout << '\\';
+                    else cout << ' ';
+                }
+            }
+            cout << '\n';
+        }
+    }
     void insert(T value) {
         if(root == NULL) {
             root = new node<T>(value);
@@ -67,7 +101,7 @@ public:
         else {
             node<T>* temp_node = root;
             while(true) {
-                if(value < temp_node->value) {
+                if(value < temp_node -> value) {
                     if(temp_node -> left == NULL) {
                         temp_node -> left = new node<T>(value);
                     }
@@ -143,20 +177,6 @@ public:
         inorder_traversal(root, &data);
         root = NULL;
         balance_recursion(0, data.size() - 1, data);
-    }
-    void balance_recursion(int start, int end, std::vector<node<T>*> data) { 
-        if(start > end) return;
-        int mid = start + (end - start) / 2;
-        insert(data[mid]->value);
-        delete(data[mid]);
-        balance_recursion(mid + 1, end, data);
-        balance_recursion(start, mid - 1, data);
-    }
-    void inorder_traversal(node<T>* root, std::vector<node<T>*>* data) {
-        if(root == NULL) return;
-        inorder_traversal(root->left, data);
-        data->push_back(root);
-        inorder_traversal(root->right, data);
     }
 
     bool is_BST() {
@@ -296,7 +316,7 @@ public:
                     return;
                 }
             }
-            if(target < temp_node->value) {
+            if(target < temp_node -> value) {
                 temp_node = temp_node->left;
             }
             else if(target > temp_node->value) {
@@ -305,7 +325,7 @@ public:
         }
     }
 
-private:
+protected:
     int height_recursion(node<T>* root) {
         if (root == NULL) return -1;
         int left_height = height_recursion(root -> left);
@@ -337,6 +357,21 @@ private:
             is_BST_recursion(root->right, root->value, max) )
             return true;
         return false;
+    }
+
+    void balance_recursion(int start, int end, std::vector<node<T>*> data) { 
+        if(start > end) return;
+        int mid = start + (end - start) / 2;
+        insert(data[mid]->value);
+        delete(data[mid]);
+        balance_recursion(mid + 1, end, data);
+        balance_recursion(start, mid - 1, data);
+    }
+    void inorder_traversal(node<T>* root, std::vector<node<T>*>* data) {
+        if(root == NULL) return;
+        inorder_traversal(root->left, data);
+        data->push_back(root);
+        inorder_traversal(root->right, data);
     }
 
     void preorder_recursion(node<T>* root) {
